@@ -32,6 +32,15 @@ This warehouse is built using a modular, multi-layer architecture following dbt 
 * **Version Control:** Git & GitHub
 * **Development Environment:** VS Code & Python Virtual Environment (`venv`)
 
+### Local Setup
+
+```bash
+python -m venv venv
+venv\Scripts\activate        # Windows (macOS/Linux: source venv/bin/activate)
+pip install -r requirements.txt
+dbt build
+```
+
 ---
 
 ## 🧠 Core Engineering Highlights
