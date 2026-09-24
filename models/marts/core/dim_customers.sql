@@ -2,25 +2,12 @@ with int_customers as (
     select * from {{ ref('int_customers_cleaned') }}
 ),
 
-int_subs as (
-    select * from {{ ref('int_subscriptions_enriched') }}
+subscription_states as (
+    select * from {{ ref('int_customer_subscription_states') }}
 ),
 
 conversion_cohorts as (
     select * from {{ ref('int_customer_conversions') }}
-),
-
-latest_sub as (
-    select
-        customer_id,
-        plan_id,
-        clear_mrr_amount,
-        subscription_status,
-        row_number() over (
-            partition by customer_id 
-            order by valid_from_date desc, subscription_id desc
-        ) as rn
-    from int_subs
 ),
 
 final as (
@@ -31,13 +18,14 @@ final as (
         c.country_code,
         c.acquisition_channel_id,
         c.signed_up_at,
-        coalesce(ls.plan_id, 'unsubscribed') as current_plan_id,
-        coalesce(ls.subscription_status, 'inactive') as current_status,
-        coalesce(ls.clear_mrr_amount, 0.00) as current_mrr,
+        coalesce(ss.current_plan_id, 'unsubscribed') as current_plan_id,
+        coalesce(ss.current_status, 'inactive') as current_status,
+        coalesce(ss.normalized_customer_lifecycle_state, 'inactive') as lifecycle_state,
+        coalesce(ss.current_mrr, 0.00) as current_mrr,
         coalesce(ch.trial_conversion_cohort, 'Unknown') as trial_conversion_cohort
     from int_customers c
-    left join latest_sub ls 
-        on c.customer_id = ls.customer_id and ls.rn = 1
+    left join subscription_states ss
+        on c.customer_id = ss.customer_id
     left join conversion_cohorts ch
         on c.customer_id = ch.customer_id
 )

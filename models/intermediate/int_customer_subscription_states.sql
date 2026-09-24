@@ -1,18 +1,16 @@
 with subscriptions as (
-    select * from {{ ref('stg_subscription_platform__subscriptions') }}
+    select * from {{ ref('int_subscriptions_enriched') }}
 ),
 
 ranked_historical_states as (
     select
         customer_id,
-        subscription_plan,
-        mrr_amount,
+        plan_id,
+        clear_mrr_amount,
         subscription_status,
-        valid_from_date,
-        valid_to_date,
         -- Window function to rank subscriptions by timeline
         row_number() over (
-            partition by customer_id 
+            partition by customer_id
             order by valid_from_date desc, subscription_id desc
         ) as state_rank
     from subscriptions
@@ -20,10 +18,10 @@ ranked_historical_states as (
 
 select
     customer_id,
-    subscription_plan as current_plan,
-    mrr_amount as current_mrr,
+    plan_id as current_plan_id,
+    clear_mrr_amount as current_mrr,
     subscription_status as current_status,
-    case 
+    case
         when subscription_status = 'cancelled' then 'churned'
         when subscription_status = 'upgraded' then 'active'
         else subscription_status

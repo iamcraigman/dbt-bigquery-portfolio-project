@@ -15,13 +15,18 @@ models:
                 to: ref('int_customers_cleaned')
                 field: customer_id
 
-      - name: current_plan
+      - name: current_plan_id
         data_type: string
-        description: "The name of the customer's most recent subscription plan."
+        description: "Plan ID of the customer's most recent subscription."
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('raw_plans')
+                field: plan_id
 
       - name: current_mrr
         data_type: numeric
-        description: "The Monthly Recurring Revenue (MRR) amount associated with the current plan."
+        description: "The resolved Monthly Recurring Revenue (MRR) of the current subscription, falling back to historical pricing."
 
       - name: current_status
         data_type: string
@@ -29,7 +34,11 @@ models:
 
       - name: normalized_customer_lifecycle_state
         data_type: string
-        description: "Cleaned and mapped lifecycle state."
+        description: "Lifecycle state mapped from the raw status: cancelled becomes churned, upgraded becomes active."
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['active', 'churned']
 
   - name: int_customers_cleaned
     description: "Governance Gateway: Validates customer profiles and flags malformed data inputs."

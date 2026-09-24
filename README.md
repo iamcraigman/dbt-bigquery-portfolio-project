@@ -110,6 +110,7 @@ dbt-bigquery-portfolio-project/
     │    │    │    ├──  dim_customers.sql
     │    │    │    ├──  dim_marketing_channels.sql
     │    │    │    ├──  dim_plans.sql
+    │    │    │    ├──  fct_customer_engagement.sql
     │    │    │    ├──  fct_customer_value.sql
     │    │    │    ├──  fct_subscriptions_historical.sql
     │    │    │    ├──  _schema__marts.yml
@@ -160,6 +161,8 @@ Monthly Recurring Revenue (MRR): Calculated dynamically across account cohorts e
 Customer Lifecycle States: Tracking healthy, canceled, and churned accounts over operational timelines.
 
 Funnel Attribution: Correlating marketing acquisition channels directly against recurring billing values.
+
+Product Engagement: Logins, feature actions and feature breadth per customer (`fct_customer_engagement`), comparable across lifecycle states and MRR.
 
 ### 📊 Business Intelligence Dashboard
 ![BI Dashboard](./images/bi_dashboard.png) 
