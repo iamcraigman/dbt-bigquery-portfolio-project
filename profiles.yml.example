@@ -1,0 +1,20 @@
+# Copy to ~/.dbt/profiles.yml (or merge into your existing one).
+# Authenticates with your gcloud login, so no key file is needed:
+#   gcloud auth application-default login
+#
+# Required env var:  GCP_PROJECT_ID   your Google Cloud project ID
+# Optional env vars: DBT_DATASET      BigQuery dataset for seeds and models (default: project_data)
+#                    DBT_LOCATION     BigQuery location (default: US)
+
+my_portfolio_dbt_project:
+  target: dev
+  outputs:
+    dev:
+      type: bigquery
+      method: oauth
+      project: "{{ env_var('GCP_PROJECT_ID') }}"
+      dataset: "{{ env_var('DBT_DATASET', 'project_data') }}"
+      location: "{{ env_var('DBT_LOCATION', 'US') }}"
+      threads: 4
+      job_execution_timeout_seconds: 300
+      priority: interactive

@@ -2,8 +2,7 @@
 
 {{
     config(
-      target_database='dbt-bigquery-portfolio-project',
-      target_schema='project_data',
+      schema='snapshots',
       unique_key='subscription_id',
       strategy='check',
       check_cols=['status', 'monthly_amount'],

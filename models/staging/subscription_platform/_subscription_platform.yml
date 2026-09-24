@@ -2,8 +2,9 @@ version: 2
 
 sources:
   - name: subscription_platform
-    database: dbt-bigquery-portfolio-project
-    schema: project_data # Update this if your BigQuery dataset name is different
+    # Defaults to the target project/dataset, where `dbt seed` loads the raw CSVs.
+    # Set DBT_RAW_DATASET to read raw tables from a different dataset.
+    schema: "{{ env_var('DBT_RAW_DATASET', target.schema) }}"
     description: "Raw data ingested from the subscription SaaS platform transactional databases."
     tables:
       - name: raw_customers

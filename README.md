@@ -38,8 +38,17 @@ This warehouse is built using a modular, multi-layer architecture following dbt 
 python -m venv venv
 venv\Scripts\activate        # Windows (macOS/Linux: source venv/bin/activate)
 pip install -r requirements.txt
-dbt build
+
+# Connect to BigQuery (see profiles.yml.example for optional settings)
+gcloud auth application-default login
+cp profiles.yml.example ~/.dbt/profiles.yml
+export GCP_PROJECT_ID=your-gcp-project  # PowerShell: $env:GCP_PROJECT_ID="your-gcp-project"
+
+dbt seed    # load the raw CSVs first; staging models read them as sources
+dbt build   # models, snapshot, and tests
 ```
+
+Snapshots are written to a separate `<dataset>_snapshots` dataset so they stay apart from the raw data.
 
 ---
 
