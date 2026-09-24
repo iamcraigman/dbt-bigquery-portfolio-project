@@ -8,24 +8,30 @@ sources:
     tables:
       - name: raw_customers
         description: "Raw customer profile and acquisition data."
-        tests:
+        data_tests:
           - unique:
-              column_name: customer_id
+              arguments:
+                column_name: customer_id
           - not_null:
-              column_name: customer_id
+              arguments:
+                column_name: customer_id
 
       - name: raw_subscriptions
         description: "Raw transactional log tracking historical and active subscription statuses."
-        tests:
+        data_tests:
           - unique:
-              column_name: subscription_id
+              arguments:
+                column_name: subscription_id
           - not_null:
-              column_name: subscription_id
+              arguments:
+                column_name: subscription_id
 
       - name: raw_usage_logs
         description: "Raw application clickstream events tracking user behavior."
-        tests:
+        data_tests:
           - unique:
-              column_name: event_id
+              arguments:
+                column_name: event_id
           - not_null:
-              column_name: event_id
+              arguments:
+                column_name: event_id

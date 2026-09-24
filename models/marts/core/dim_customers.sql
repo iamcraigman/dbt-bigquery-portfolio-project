@@ -18,7 +18,7 @@ latest_sub as (
         subscription_status,
         row_number() over (
             partition by customer_id 
-            order by valid_from_date desc
+            order by valid_from_date desc, subscription_id desc
         ) as rn
     from int_subs
 ),

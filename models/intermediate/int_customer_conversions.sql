@@ -12,28 +12,28 @@ ordered_history as (
         -- Find the user's very first plan tier
         first_value(subscription_plan) over (
             partition by customer_id 
-            order by valid_from_date asc
+            order by valid_from_date asc, subscription_id asc
             rows between unbounded preceding and unbounded following
         ) as initial_plan,
         -- Find the user's very first staus
         first_value(subscription_status) over (
             partition by customer_id 
-            order by valid_from_date asc
+            order by valid_from_date asc, subscription_id asc
             rows between unbounded preceding and unbounded following
         ) as initial_status,
         -- Get the plan details of their NEXT chronological subscription state
         lead(subscription_plan) over (
             partition by customer_id 
-            order by valid_from_date asc
+            order by valid_from_date asc, subscription_id asc
         ) as next_plan,
         lead(subscription_status) over (
             partition by customer_id 
-            order by valid_from_date asc
+            order by valid_from_date asc, subscription_id asc
         ) as next_status,
         -- Row number to isolate their first lifecycle event block
         row_number() over (
             partition by customer_id 
-            order by valid_from_date asc
+            order by valid_from_date asc, subscription_id asc
         ) as event_sequence
     from subscriptions
 ),

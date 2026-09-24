@@ -54,18 +54,20 @@ left join ref_pricing pr
     and (s.valid_from_date < pr.valid_to or pr.valid_to is null)
 ```
 ### 2. High-Performance Incremental Processing (merge strategy)
-To minimize BigQuery query computation costs, the main fact table (fct_subscriptions_historical) uses an Incremental Materialization strategy. Rather than rebuilding the table from scratch, dbt writes a target MERGE statement to update modified historical keys and append new records seamlessly based on unique keys:
+To minimize BigQuery query computation costs, the main fact table (`fct_subscriptions_historical`) uses an Incremental Materialization strategy. Rather than rebuilding the table from scratch, dbt writes a MERGE statement keyed on `subscription_id`. Each run picks up new subscriptions and re-merges any subscription still open in the target, since open rows are the only ones that can later be cancelled, upgraded or end-dated:
 
-```yaml
-marts:
-  core:
-    fct_subscriptions_historical:
-      +materialized: incremental
-      +incremental_strategy: merge
-      +unique_key: subscription_id
+```sql
+{{ config(materialized='incremental', unique_key='subscription_id', incremental_strategy='merge') }}
+
+{% if is_incremental() %}
+  where valid_from_date >= (select max(valid_from_date) from {{ this }})
+     or subscription_id in (select subscription_id from {{ this }} where valid_to_date is null)
+{% endif %}
+```
+
 ### 3. Custom Jinja Macro Data Validation
 Data quality is enforced programmatically in the intermediate layer. A custom Jinja macro (validate_email) wraps a complex regular expression evaluation to validate account strings and generate an execution flag before records are exposed to production dashboards:
-```
+
 ```sql
 {% macro validate_email(column_name) %}
     case 

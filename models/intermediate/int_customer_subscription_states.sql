@@ -13,7 +13,7 @@ ranked_historical_states as (
         -- Window function to rank subscriptions by timeline
         row_number() over (
             partition by customer_id 
-            order by valid_from_date desc
+            order by valid_from_date desc, subscription_id desc
         ) as state_rank
     from subscriptions
 )

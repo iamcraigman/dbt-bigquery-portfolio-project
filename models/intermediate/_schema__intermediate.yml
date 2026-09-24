@@ -7,12 +7,13 @@ models:
       - name: customer_id
         data_type: string
         description: "Unique identifier for the customer."
-        tests:
+        data_tests:
           - unique
           - not_null
           - relationships:
-              to: ref('int_customers_cleaned')
-              field: customer_id
+              arguments:
+                to: ref('int_customers_cleaned')
+                field: customer_id
 
       - name: current_plan
         data_type: string
@@ -39,7 +40,7 @@ models:
       - name: customer_id
         data_type: string
         description: "System primary key."
-        tests:
+        data_tests:
           - unique
           - not_null
 
@@ -58,15 +59,16 @@ models:
       - name: acquisition_channel_id
         data_type: string
         description: "Foreign key linking to the marketing channel table."
-        tests:
+        data_tests:
           - relationships:
-              to: ref('raw_marketing_channels')
-              field: channel_id
+              arguments:
+                to: ref('raw_marketing_channels')
+                field: channel_id
 
       - name: is_valid_email_format
         data_type: boolean
         description: "Data Quality Flag: Output of custom validation regex macro."
-        tests:
+        data_tests:
           - not_null
 
   - name: int_subscriptions_enriched
@@ -75,34 +77,37 @@ models:
       - name: subscription_id
         data_type: string
         description: "Primary key. Unique identifier for the specific subscription record state."
-        tests:
+        data_tests:
           - unique
           - not_null
 
       - name: customer_id
         data_type: string
         description: "Foreign key mapping back to the customer profile."
-        tests:
+        data_tests:
           - not_null
           - relationships:
-              to: ref('int_customers_cleaned')
-              field: customer_id
+              arguments:
+                to: ref('int_customers_cleaned')
+                field: customer_id
 
       - name: plan_id
         data_type: string
         description: "Foreign key mapping to the internal plan definition table."
-        tests:
+        data_tests:
           - relationships:
-              to: ref('raw_plans')
-              field: plan_id
+              arguments:
+                to: ref('raw_plans')
+                field: plan_id
 
       - name: price_id
         data_type: string
         description: "Foreign key mapping to the historical plan pricing table."
-        tests:
+        data_tests:
           - relationships:
-              to: ref('raw_plan_pricing_history')
-              field: price_id
+              arguments:
+                to: ref('raw_plan_pricing_history')
+                field: price_id
 
       - name: subscription_status
         data_type: string
